@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escultura Futurista Interativa</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+  <script>
+    let angle = 0;
+    let camRotX = 0;
+    let camRotY = 0;
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let zoom = 500;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight, WEBGL);
+    }
+
+    function draw() {
+      background(10);
+
+      // Iluminação dramática
+      ambientLight(50);
+      directionalLight(255, 255, 255, 0.5, -1, -0.5);
+      pointLight(255, 150, 100, 200, -200, 300);
+
+      // Inércia suave nos movimentos de rotação
+      camRotX = lerp(camRotX, targetRotX, 0.1);
+      camRotY = lerp(camRotY, targetRotY, 0.1);
+
+      // Aplica rotação e zoom (aproximação da câmera)
+      rotateX(camRotX);
+      rotateY(camRotY);
+      translate(0, 0, -zoom);
+
+      // Base da escultura
+      push();
+      translate(0, 150, 0);
+      ambientMaterial(60, 120, 255);
+      rotateX(HALF_PI);
+      cylinder(200, 20);
+      pop();
+
+      // Eixo central girando
+      push();
+      ambientMaterial(200, 200, 255);
+      rotateY(angle);
+      cylinder(20, 300);
+      pop();
+
+      // Esferas orbitando ao redor do eixo
+      let orbitRadius = 150;
+      for (let i = 0; i < 4; i++) {
+        let a = angle + (TWO_PI / 4) * i;
+        let x = orbitRadius * cos(a);
+        let z = orbitRadius * sin(a);
+        push();
+        translate(x, 0, z);
+        specularMaterial(255, 100, 100);
+        sphere(30);
+        pop();
+      }
+
+      // Cubos pulsando acima do eixo
+      let pulse = sin(angle * 2) * 20;
+      for (let i = 0; i < 3; i++) {
+        push();
+        translate(0, -100 - i * 60 + pulse, 0);
+        rotateY(angle * 0.5);
+        ambientMaterial(100, 255, 200);
+        box(40);
+        pop();
+      }
+
+      // Anel giratório
+      push();
+      rotateY(-angle * 1.5);
+      rotateX(HALF_PI);
+      noFill();
+      stroke(255);
+      torus(180, 5);
+      pop();
+
+      angle += 0.01;
+    }
+
+    function mouseDragged() {
+      // Amplifica impacto do mouse na rotação
+      targetRotY += (movedX * 0.01);
+      targetRotX += (movedY * 0.01);
+      // Limita rotação vertical para evitar virada extrema
+      targetRotX = constrain(targetRotX, -PI / 2.2, PI / 2.2);
+    }
+
+    function mouseWheel(event) {
+      // Zoom com scroll
+      zoom += event.delta * 0.5;
+      zoom = constrain(zoom, 200, 1000);
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
+  </script>
+</body>
+</html>
