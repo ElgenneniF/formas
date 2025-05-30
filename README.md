@@ -12,6 +12,6 @@
 
 ## Como usar
 
-1. Abra o link: 
+1. Abra o link: https://elgennenif.github.io/formas/
 2. Use o mouse para explorar a escultura.
 
